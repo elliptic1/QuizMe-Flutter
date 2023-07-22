@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'blocs/mic/MicState.dart';
 import 'blocs/mic/MicText.dart';
-import 'blocs/mic/microphone_cubit.dart';
+import 'blocs/mic/MicCubit.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +40,7 @@ class MyHomePage extends StatelessWidget {
       ),
       body: const MicText(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<MicCubit>().toggle(),
+        onPressed: () => context.read<MicCubit>().startRecording(),
         tooltip: 'Speak',
         child: const Icon(Icons.mic),
       ),

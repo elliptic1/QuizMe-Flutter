@@ -1,6 +1,29 @@
 // mic_cubit.dart
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
 
-enum MicState { notListening, listening }
+abstract class MicState extends Equatable {
+  const MicState();
 
+  @override
+  List<Object> get props => [];
+}
 
+class MicInitial extends MicState {}
+
+class MicRecording extends MicState {
+  final Duration duration;
+  final double decibels;
+
+  const MicRecording(this.duration, this.decibels);
+
+  @override
+  List<Object> get props => [duration, decibels];
+}
+
+class MicStopped extends MicState {}
+
+class MicError extends MicState {
+  final String message;
+
+  const MicError(this.message);
+}
