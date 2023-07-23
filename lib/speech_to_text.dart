@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -23,12 +22,12 @@ class SpeechSampleApp extends StatefulWidget {
 /// of the underlying platform.
 class _SpeechSampleAppState extends State<SpeechSampleApp> {
   bool _hasSpeech = false;
-  bool _logEvents = false;
+  bool _logEvents = true;
   bool _onDevice = false;
   final TextEditingController _pauseForController =
-  TextEditingController(text: '3');
+      TextEditingController(text: '3');
   final TextEditingController _listenForController =
-  TextEditingController(text: '30');
+      TextEditingController(text: '30');
   double level = 0.0;
   double minSoundLevel = 50000;
   double maxSoundLevel = -50000;
@@ -176,7 +175,7 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
         });
       }).catchError((error) {
         // Handle the error
-        log(error);
+        _logEvent(error.toString());
       });
     }
   }
@@ -362,7 +361,17 @@ class SpeechControlWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         TextButton(
-          onPressed: !hasSpeech || isListening ? null : startListening,
+          onPressed: !hasSpeech || isListening
+              ? () {
+                  debugPrint("not starting. hasSpeech: $hasSpeech, isListening: $isListening");
+                }
+              : () {
+                  // This is a code block where you can call multiple functions
+                  // or perform other operations.
+                  debugPrint("starting");
+                  startListening();
+                  // You can add more code here.
+                },
           child: const Text('Start'),
         ),
         TextButton(
@@ -418,10 +427,10 @@ class SessionOptionsWidget extends StatelessWidget {
                 items: localeNames
                     .map(
                       (localeName) => DropdownMenuItem(
-                    value: localeName.localeId,
-                    child: Text(localeName.name),
-                  ),
-                )
+                        value: localeName.localeId,
+                        child: Text(localeName.name),
+                      ),
+                    )
                     .toList(),
               ),
             ],
@@ -504,13 +513,13 @@ class SpeechStatusWidget extends StatelessWidget {
       child: Center(
         child: speech.isListening
             ? const Text(
-          "I'm listening...",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        )
+                "I'm listening...",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )
             : const Text(
-          'Not listening',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+                'Not listening',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
       ),
     );
   }

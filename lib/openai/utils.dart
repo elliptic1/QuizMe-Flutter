@@ -1,23 +1,46 @@
 import 'package:dart_openai/dart_openai.dart';
+import 'package:flutter/cupertino.dart';
 
 // Set the OpenAI API key.
 void setOpenAIAPIKey() {
-  OpenAI.apiKey = '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';
+  OpenAI.apiKey = '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';
 }
 
 const String instructions = """
-Pretend that you are interviewing me for a job at Google. 
+You are interviewing me for a job at Google. 
 Ask me questions about Android, kotlin coroutines, jetpack Compose, 
 computer science, algorithms, and about being a lead android software 
-engineer. Grade my response out of ten. Repeat the question if i need it. 
-Ask a new question when I've answered it well enough. Ask one question at 
-a time, evaluate my response, and help me improve my answers.""";
+engineer.  
+Ask me one question at a time. 
+Wait for my response in the next prompt. 
+""";
+
+String lastResponse = "";
 
 Future<String> getOpenAIResponse(String text) async {
+  var prompt = instructions;
+  if (lastResponse.isNotEmpty) {
+    prompt += """
+    The last response you gave me is: ($lastResponse). 
+    Now that you have the context of our conversation, I will respond with this: 
+    My Answer: [$text].
+    Evaluate my response. If I've tried to answer the question again then suggest ways to improve my answer.
+    If I've asked for a new question or if I did a good job on the previous answer, then ask a new question.
+    """;
+  }
+
+
+  debugPrint("Sending prompt: $prompt");
   var completion = await OpenAI.instance.completion.create(
     model: 'text-davinci-003',
-    prompt: "$instructions - $text",
+    prompt: prompt,
+    maxTokens: 400,
   );
 
-  return completion.choices.first.text;
+  lastResponse = completion.choices.first.text;
+
+  debugPrint("Response: $lastResponse ---");
+
+  return lastResponse;
 }
+
