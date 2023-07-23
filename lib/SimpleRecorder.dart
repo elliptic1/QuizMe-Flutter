@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 
 class SimpleRecorder extends StatefulWidget {
+  const SimpleRecorder({super.key});
+
   @override
   SimpleRecorderState createState() => SimpleRecorderState();
 }

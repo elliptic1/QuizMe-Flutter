@@ -8,7 +8,7 @@ abstract class MicState extends Equatable {
   List<Object> get props => [];
 }
 
-class MicInitial extends MicState {}
+class MicIdle extends MicState {}
 
 class MicRecording extends MicState {
   final Duration duration;
@@ -19,8 +19,6 @@ class MicRecording extends MicState {
   @override
   List<Object> get props => [duration, decibels];
 }
-
-class MicStopped extends MicState {}
 
 class MicError extends MicState {
   final String message;

@@ -1,51 +1,44 @@
+// MicCubit.dart
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 
+import '../../data/repositories/MicRepository.dart';
 import 'MicState.dart';
 
 class MicCubit extends Cubit<MicState> {
-  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
-  StreamSubscription<RecordingDisposition>? _recordingSubscription;
+  final MicRepository _micRepository;
+  int _sampleCount = 0;
 
-  MicCubit() : super(MicInitial()) {
-    _initialize();
-  }
-
-  Future<void> _initialize() async {
-    try {
-      await _recorder.openRecorder();
-    } catch (e) {
-      emit(MicError(e.toString()));
-    }
-  }
+  MicCubit(this._micRepository) : super(MicIdle());
 
   Future<void> startRecording() async {
+    log("MicCubit - startRecording");
     try {
-      await _recorder.startRecorder();
-      _recordingSubscription = _recorder.onProgress!.listen((event) {
-        emit(MicRecording(event.duration, event.decibels ?? 0.0));
+      _sampleCount = 0;
+      await _micRepository.startRecording((samples) {
+        _sampleCount += samples.length;
+        Duration duration = Duration(milliseconds: (_sampleCount / 44.1).round());
+        // Here you can process the audio samples and emit a new state
+        emit(MicRecording(duration, 0.0)); // Decibels is set to 0.0 as we're not calculating it
       });
     } catch (e) {
-      emit(MicError(e.toString()));
+      String msg = "Failed to start recording: ${e.toString()}";
+      log(msg);
+      emit(MicError(msg));
+      await stopRecording();
     }
   }
 
   Future<void> stopRecording() async {
     try {
-      await _recorder.stopRecorder();
-      await _recorder.closeRecorder();
-      _recordingSubscription?.cancel();
-      emit(MicStopped());
+      await _micRepository.stopRecording();
+      emit(MicIdle());
     } catch (e) {
-      emit(MicError(e.toString()));
+      String msg = "Failed to stop recording: ${e.toString()}";
+      log(msg);
+      emit(MicError(msg));
     }
-  }
-
-  @override
-  Future<void> close() {
-    _recordingSubscription?.cancel();
-    return super.close();
   }
 }
