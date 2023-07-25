@@ -38,6 +38,7 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
   String lastError = '';
   String lastStatus = '';
   String _currentLocaleId = '';
+
   // List<LocaleName> _localeNames = [];
   final SpeechToText speech = SpeechToText();
 
@@ -91,12 +92,12 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
           Expanded(
             flex: 4,
             child: RecognitionResultsWidget(
-                lastWords: lastWords,
-                level: level,
-                startListening: () async {
-                  await initSpeechState();
-                  startListening();
-                },
+              lastWords: lastWords,
+              level: level,
+              startListening: () async {
+                await initSpeechState();
+                startListening();
+              },
             ),
           ),
           VoiceDropdown(),
@@ -232,9 +233,9 @@ class RecognitionResultsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     if (lastWords.isNotEmpty) {
-      sendRequestAndPlayAudio(lastWords, "cPH0XQN52gtqbMOQoFS3");
+      sendRequestAndPlayAudio(lastWords, "cPH0XQN52gtqbMOQoFS3")
+          .whenComplete(startListening());
     }
 
     return Column(
@@ -350,7 +351,8 @@ class SpeechControlWidget extends StatelessWidget {
         TextButton(
           onPressed: !hasSpeech || isListening
               ? () {
-                  debugPrint("not starting. hasSpeech: $hasSpeech, isListening: $isListening");
+                  debugPrint(
+                      "not starting. hasSpeech: $hasSpeech, isListening: $isListening");
                 }
               : () {
                   // This is a code block where you can call multiple functions

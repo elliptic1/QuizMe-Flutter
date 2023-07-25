@@ -6,6 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import '../openai/setApiKey.dart';
+import 'audio.dart';
 
 
 Future<void> sendRequestAndPlayAudio(String text, String voiceId) async {
@@ -33,9 +34,7 @@ Future<void> sendRequestAndPlayAudio(String text, String voiceId) async {
     final Directory tempDir = await getTemporaryDirectory();
     final File tempFile = File('${tempDir.path}/temp.mp3');
     await tempFile.writeAsBytes(response.bodyBytes);
-    final AudioPlayer audioPlayer = AudioPlayer();
-
-    await audioPlayer.play(DeviceFileSource(tempFile.path));
+    await playAudioFromLocalStorage(tempFile.path);
   } else {
     // error
   }
