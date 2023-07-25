@@ -6,6 +6,8 @@ import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
+import 'elevenlabs/textToSpeech.dart';
+import 'elevenlabs/voice_drop_down.dart';
 import 'openai/setApiKey.dart';
 import 'openai/utils.dart';
 
@@ -36,7 +38,7 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
   String lastError = '';
   String lastStatus = '';
   String _currentLocaleId = '';
-  List<LocaleName> _localeNames = [];
+  // List<LocaleName> _localeNames = [];
   final SpeechToText speech = SpeechToText();
 
   @override
@@ -62,7 +64,7 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
       if (hasSpeech) {
         // Get the list of languages installed on the supporting platform so they
         // can be displayed in the UI for selection by the user.
-        _localeNames = await speech.locales();
+        // _localeNames = await speech.locales();
 
         var systemLocale = await speech.systemLocale();
         _currentLocaleId = systemLocale?.localeId ?? '';
@@ -99,7 +101,7 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
                 },
             ),
           ),
-          // SpeechStatusWidget(speech: speech),
+          VoiceDropdown(),
         ]),
       ),
     );
@@ -232,6 +234,11 @@ class RecognitionResultsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    if (lastWords.length > 2) {
+      sendRequestAndPlayAudio(lastWords, "4D09JdZcXr956orQDH64");
+    }
+
     return Column(
       children: <Widget>[
         Expanded(
@@ -244,7 +251,7 @@ class RecognitionResultsWidget extends StatelessWidget {
                     lastWords,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 25.0,
+                      fontSize: 20.0,
                     ),
                   ),
                 ),
@@ -367,141 +374,3 @@ class SpeechControlWidget extends StatelessWidget {
     );
   }
 }
-
-// class SessionOptionsWidget extends StatelessWidget {
-//   const SessionOptionsWidget(
-//       this.currentLocaleId,
-//       this.switchLang,
-//       this.localeNames,
-//       this.logEvents,
-//       this.switchLogging,
-//       this.pauseForController,
-//       this.listenForController,
-//       this.onDevice,
-//       this.switchOnDevice,
-//       {Key? key})
-//       : super(key: key);
-//
-//   final String currentLocaleId;
-//   final void Function(String?) switchLang;
-//   final void Function(bool?) switchLogging;
-//   final void Function(bool?) switchOnDevice;
-//   final TextEditingController pauseForController;
-//   final TextEditingController listenForController;
-//   final List<LocaleName> localeNames;
-//   final bool logEvents;
-//   final bool onDevice;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.all(8.0),
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: <Widget>[
-//           Row(
-//             children: [
-//               const Text('Language: '),
-//               DropdownButton<String>(
-//                 onChanged: (selectedVal) => switchLang(selectedVal),
-//                 value: currentLocaleId,
-//                 items: localeNames
-//                     .map(
-//                       (localeName) => DropdownMenuItem(
-//                         value: localeName.localeId,
-//                         child: Text(localeName.name),
-//                       ),
-//                     )
-//                     .toList(),
-//               ),
-//             ],
-//           ),
-//           Row(
-//             children: [
-//               const Text('pauseFor: '),
-//               Container(
-//                   padding: const EdgeInsets.only(left: 8),
-//                   width: 80,
-//                   child: TextFormField(
-//                     controller: pauseForController,
-//                   )),
-//               Container(
-//                   padding: const EdgeInsets.only(left: 16),
-//                   child: const Text('listenFor: ')),
-//               Container(
-//                   padding: const EdgeInsets.only(left: 8),
-//                   width: 80,
-//                   child: TextFormField(
-//                     controller: listenForController,
-//                   )),
-//             ],
-//           ),
-//           Row(
-//             children: [
-//               const Text('On device: '),
-//               Checkbox(
-//                 value: onDevice,
-//                 onChanged: switchOnDevice,
-//               ),
-//               const Text('Log events: '),
-//               Checkbox(
-//                 value: logEvents,
-//                 onChanged: switchLogging,
-//               ),
-//             ],
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-// class InitSpeechWidget extends StatelessWidget {
-//   const InitSpeechWidget(this.hasSpeech, this.initSpeechState, {Key? key})
-//       : super(key: key);
-//
-//   final bool hasSpeech;
-//   final Future<void> Function() initSpeechState;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceAround,
-//       children: <Widget>[
-//         TextButton(
-//           onPressed: hasSpeech ? null : initSpeechState,
-//           child: const Text('Initialize'),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-// /// Display the current status of the listener
-// class SpeechStatusWidget extends StatelessWidget {
-//   const SpeechStatusWidget({
-//     Key? key,
-//     required this.speech,
-//   }) : super(key: key);
-//
-//   final SpeechToText speech;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(vertical: 20),
-//       color: Theme.of(context).colorScheme.background,
-//       child: Center(
-//         child: speech.isListening
-//             ? const Text(
-//                 "I'm listening...",
-//                 style: TextStyle(fontWeight: FontWeight.bold),
-//               )
-//             : const Text(
-//                 'Not listening',
-//                 style: TextStyle(fontWeight: FontWeight.bold),
-//               ),
-//       ),
-//     );
-//   }
-// }
