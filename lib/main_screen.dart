@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:quiz_me/widgets/InterviewInitWidget.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
-import 'elevenlabs/textToSpeech.dart';
+import 'elevenlabs/send_text.dart';
 import 'elevenlabs/voice_drop_down.dart';
-import 'openai/setApiKey.dart';
 import 'openai/utils.dart';
 
 void main() => runApp(const SpeechSampleApp());
@@ -52,8 +52,6 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
   /// it can only be called once.
   Future<void> initSpeechState() async {
     _logEvent('Initialize');
-
-    setOpenAIAPIKey();
 
     try {
       var hasSpeech = await speech.initialize(
@@ -235,12 +233,13 @@ class RecognitionResultsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    if (lastWords.length > 2) {
-      sendRequestAndPlayAudio(lastWords, "4D09JdZcXr956orQDH64");
+    if (lastWords.isNotEmpty) {
+      sendRequestAndPlayAudio(lastWords, "cPH0XQN52gtqbMOQoFS3");
     }
 
     return Column(
       children: <Widget>[
+        const InterviewInitWidget(),
         Expanded(
           child: Stack(
             children: <Widget>[
